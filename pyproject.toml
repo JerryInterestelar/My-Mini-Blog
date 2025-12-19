@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "mini-blog"
+version = "0.1.0"
+description = "Mini Blog com Usuários, Postagens e comentários"
+authors = ["JerryInterestelar <jerrydesousa17@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = {extras = ["standard"], version = "^0.124.4"}
+sqlmodel = "^0.0.27"
+pydantic-settings = "^2.12.0"
+pyjwt = "^2.10.1"
+pwdlib = {extras = ["argon2"], version = "^0.3.0"}
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^9.0.2"
+
+[tool.pyright]
+typeCheckingMode = "strict"
+
+[tool.ruff]
+[format]
+quote-style = "single"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
