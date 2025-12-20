@@ -6,7 +6,15 @@ class UserEmailOrPassIncorrectError(Exception):
     pass
 
 
+class UserHasNoPermissionsError(Exception):
+    pass
+
+
 class EmailAlreadyExistsError(Exception):
+    pass
+
+
+class PostNotFoundError(Exception):
     pass
 
 

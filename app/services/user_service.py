@@ -42,7 +42,6 @@ class UserService:
         return user_db
 
     def update(self, user_id: int, updated_user: UserRequest) -> User:
-        # Aqui fica a verificação quando tiver passando o current_user
         user_db: User | None = self.get_by_id(user_id)
         if not user_db:
             raise UserNotFoundError('Usuário não encontrado')
