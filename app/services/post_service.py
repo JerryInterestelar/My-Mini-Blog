@@ -15,7 +15,6 @@ class PostService:
     def create(self, new_post: PostRequest) -> Post:
         post_db = Post.model_validate(new_post)
         post_db.user_id = self.current_user.id
-        post_db.user = self.current_user
         self.session.add(post_db)
         self.session.commit()
         self.session.refresh(post_db)
