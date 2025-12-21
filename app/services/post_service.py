@@ -7,18 +7,9 @@ from app.models.post_model import Post
 from app.schemas.post_schema import PostRequest
 
 
-class PostService:
-    def __init__(self, current_user: User, session: Session) -> None:
-        self.current_user = current_user
+class PostPublicService:
+    def __init__(self, session: Session) -> None:
         self.session = session
-
-    def create(self, new_post: PostRequest) -> Post:
-        post_db = Post.model_validate(new_post)
-        post_db.user_id = self.current_user.id
-        self.session.add(post_db)
-        self.session.commit()
-        self.session.refresh(post_db)
-        return post_db
 
     def list_posts(self) -> list[Post]:
         return list(self.session.exec(select(Post)).all())
@@ -27,6 +18,20 @@ class PostService:
         post_db: Post | None = self.session.get(Post, post_id)
         if post_db is None:
             raise PostNotFoundError('Postagem não encontrada')
+        return post_db
+
+
+class PostUserService(PostPublicService):
+    def __init__(self, current_user: User, session: Session) -> None:
+        super().__init__(session)
+        self.current_user = current_user
+
+    def create(self, new_post: PostRequest) -> Post:
+        post_db = Post.model_validate(new_post)
+        post_db.user_id = self.current_user.id
+        self.session.add(post_db)
+        self.session.commit()
+        self.session.refresh(post_db)
         return post_db
 
     def update(self, post_id: int, updated_post: PostRequest) -> Post:

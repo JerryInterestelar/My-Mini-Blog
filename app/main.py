@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from app.core.database import create_db_and_tables
 from app.models.user_model import User  # type: ignore
 from app.models.post_model import Post  # type: ignore
-from app.routers import user_router, auth_router
+from app.routers import user_router, auth_router, post_router
 
 
 @asynccontextmanager
@@ -19,6 +19,7 @@ app: FastAPI = FastAPI(lifespan=lifespan)
 
 app.include_router(user_router.router)
 app.include_router(auth_router.router)
+app.include_router(post_router.router)
 
 
 @app.get('/')

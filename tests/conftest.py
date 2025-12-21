@@ -9,7 +9,7 @@ from app.main import app
 from app.models.user_model import User  # type: ignore
 from app.schemas.token_schema import Token
 from app.services.auth_service import AuthService
-from app.services.post_service import PostService
+from app.services.post_service import PostPublicService, PostUserService
 from app.services.user_service import UserService
 from app.core.database import get_session
 
@@ -92,5 +92,10 @@ def auth_service(session: Session) -> AuthService:
 
 
 @pytest.fixture()
-def post_service(user: UserFixture, session: Session) -> PostService:
-    return PostService(user.model, session)
+def post_public_service(session: Session) -> PostPublicService:
+    return PostPublicService(session)
+
+
+@pytest.fixture()
+def post_user_service(user: UserFixture, session: Session) -> PostUserService:
+    return PostUserService(user.model, session)

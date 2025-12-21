@@ -11,19 +11,9 @@ from app.core.exceptions import InvalidCredentialsError
 from app.models.user_model import User
 from app.schemas.token_schema import TokenData
 from app.services.auth_service import AuthService
+from app.services.post_service import PostPublicService, PostUserService
 from app.services.user_service import UserService
 
-
-def get_user_service(session: Annotated[Session, Depends(get_session)]) -> UserService:
-    return UserService(session)
-
-
-def get_auth_service(session: Annotated[Session, Depends(get_session)]) -> AuthService:
-    return AuthService(session)
-
-
-user_service_dep = Annotated[UserService, Depends(get_user_service)]
-auth_service_dep = Annotated[AuthService, Depends(get_auth_service)]
 
 oauth_scheme = OAuth2PasswordBearer(tokenUrl='/auth/token')
 
@@ -50,6 +40,31 @@ def get_current_user(token: token_dep, session: session_dep) -> User:
     return user_db
 
 
+def get_user_service(session: session_dep) -> UserService:
+    return UserService(session)
+
+
+def get_auth_service(session: session_dep) -> AuthService:
+    return AuthService(session)
+
+
+user_service_dep = Annotated[UserService, Depends(get_user_service)]
+auth_service_dep = Annotated[AuthService, Depends(get_auth_service)]
+
 # TODO: Criar dependência 'get_current_active_user' para bloquear usuários desativados
 
 current_user_dep = Annotated[User, Depends(get_current_user)]
+
+
+def get_post_service(session: session_dep) -> PostPublicService:
+    return PostPublicService(session)
+
+
+def get_user_post_service(
+    user: current_user_dep, session: session_dep
+) -> PostUserService:
+    return PostUserService(user, session)
+
+
+post_public_service_dep = Annotated[PostUserService, Depends(get_post_service)]
+post_user_service_dep = Annotated[PostUserService, Depends(get_user_post_service)]
