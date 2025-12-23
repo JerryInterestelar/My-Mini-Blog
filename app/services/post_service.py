@@ -15,6 +15,9 @@ class PostPublicService:
         return list(self.session.exec(select(Post)).all())
 
     def get_by_id(self, post_id: int) -> Post:
+        """
+        (self, post_id: int) -> Post | PostNotFoundError
+        """
         post_db: Post | None = self.session.get(Post, post_id)
         if post_db is None:
             raise PostNotFoundError('Postagem não encontrada')
@@ -35,6 +38,9 @@ class PostUserService(PostPublicService):
         return post_db
 
     def update(self, post_id: int, updated_post: PostRequest) -> Post:
+        """
+        (self, post_id: int, updated_post: PostRequest) -> Post | PostNotFoundError | UserHasNoPermissionsError
+        """
         post_db: Post = self.get_by_id(post_id)
 
         if post_db.user_id != self.current_user.id:
@@ -50,6 +56,9 @@ class PostUserService(PostPublicService):
         return post_db
 
     def delete(self, post_id: int) -> None:
+        """
+        (self, post_id: int) -> Post | PostNotFoundError | UserHasNoPermissionsError
+        """
         post_db: Post = self.get_by_id(post_id)
 
         if post_db.user_id != self.current_user.id:
