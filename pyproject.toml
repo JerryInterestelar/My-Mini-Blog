@@ -4,9 +4,10 @@ version = "0.1.0"
 description = "Mini Blog com Usuários, Postagens e comentários"
 authors = ["JerryInterestelar <jerrydesousa17@gmail.com>"]
 readme = "README.md"
+package-mode = false  # <--- ADICIONE ESTA LINHA
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.13"
 fastapi = {extras = ["standard"], version = "^0.124.4"}
 sqlmodel = "^0.0.27"
 pydantic-settings = "^2.12.0"
