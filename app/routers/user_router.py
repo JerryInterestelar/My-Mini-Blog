@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status
 
-from app.core.exceptions import UserNotFoundError
+from app.core.exceptions import EmailAlreadyExistsError, UserNotFoundError
 from app.models.user_model import User
 from app.schemas.user_scheme import UserRequest, UserResponse
 from app.core.dependecies import user_service_dep, current_user_dep
@@ -25,8 +25,11 @@ def get_user(user_id: int, service: user_service_dep) -> User | None:
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=UserResponse)
 def create_user(user: UserRequest, service: user_service_dep) -> User:
-    user_db: User = service.create(user)
-    return user_db
+    try:
+        user_db: User = service.create(user)
+        return user_db
+    except EmailAlreadyExistsError as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
 
 
 @router.put('/{user_id}', status_code=status.HTTP_200_OK, response_model=UserResponse)

@@ -19,7 +19,12 @@ def test_get_users_ok(client: TestClient, user: UserFixture) -> None:
     assert response.status_code == status.HTTP_200_OK
     assert len(response.json()) == 1
     assert response.json() == [
-        {'name': user.model.name, 'email': user.model.email, 'id': user.model.id}
+        {
+            'name': user.model.name,
+            'email': user.model.email,
+            'id': user.model.id,
+            'posts': [],
+        }
     ]
 
 
@@ -31,6 +36,7 @@ def test_get_user_ok(client: TestClient, user: UserFixture) -> None:
         'name': user.model.name,
         'email': user.model.email,
         'id': user.model.id,
+        'posts': [],
     }
 
 
@@ -44,7 +50,12 @@ def test_create_user_ok(client: TestClient) -> None:
         },
     )
     assert response.status_code == status.HTTP_201_CREATED
-    assert response.json() == {'name': 'user', 'email': 'email@email', 'id': 1}
+    assert response.json() == {
+        'name': 'user',
+        'email': 'email@email',
+        'id': 1,
+        'posts': [],
+    }
 
 
 def test_update_user_ok(client: TestClient, user: UserFixture, token: Token) -> None:
@@ -59,6 +70,7 @@ def test_update_user_ok(client: TestClient, user: UserFixture, token: Token) -> 
         'name': 'User2',
         'email': 'email2@email',
         'id': user.model.id,
+        'posts': [],
     }
 
 
@@ -83,10 +95,13 @@ def test_get_user_error_user_not_found(client: TestClient) -> None:
     assert response.json() == {'detail': 'Usuário não encontrado'}
 
 
-# TODO: Teste para email duplicado
-@pytest.mark.skip(reason=r)
-def test_create_user_error_email_duplicado():
-    pass
+def test_create_user_error_email_duplicado(client: TestClient, user: UserFixture):
+    response = client.post(
+        '/users',
+        json={'name': 'User2', 'email': user.model.email, 'password': 'senha_nova123'},
+    )
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert response.json() == {'detail': 'Este email já está sendo usado'}
 
 
 def test_update_user_error_forbidden(
