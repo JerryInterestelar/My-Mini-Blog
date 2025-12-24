@@ -6,9 +6,11 @@ from fastapi.testclient import TestClient
 
 from app.core.security import get_password_hash
 from app.main import app
+from app.models.post_model import Post
 from app.models.user_model import User  # type: ignore
 from app.schemas.token_schema import Token
 from app.services.auth_service import AuthService
+from app.services.post_service import PostPublicService, PostUserService
 from app.services.user_service import UserService
 from app.core.database import get_session
 
@@ -72,6 +74,26 @@ def other_user(session: Session) -> UserFixture:
 
 
 @pytest.fixture()
+def post(user: UserFixture, session: Session) -> Post:
+    new_post = Post(title='Titulo1', content='Conteudo1', user_id=user.model.id)
+
+    session.add(new_post)
+    session.commit()
+    session.refresh(new_post)
+    return new_post
+
+
+@pytest.fixture()
+def other_post(other_user: UserFixture, session: Session) -> Post:
+    new_post = Post(title='Titulo1', content='Conteudo1', user_id=other_user.model.id)
+
+    session.add(new_post)
+    session.commit()
+    session.refresh(new_post)
+    return new_post
+
+
+@pytest.fixture()
 def token(client: TestClient, user: UserFixture) -> Token:
     response = client.post(
         '/auth/token',
@@ -88,3 +110,13 @@ def user_service(session: Session) -> UserService:
 @pytest.fixture()
 def auth_service(session: Session) -> AuthService:
     return AuthService(session)
+
+
+@pytest.fixture()
+def post_public_service(session: Session) -> PostPublicService:
+    return PostPublicService(session)
+
+
+@pytest.fixture()
+def post_user_service(user: UserFixture, session: Session) -> PostUserService:
+    return PostUserService(user.model, session)

@@ -13,5 +13,6 @@ class PostRequest(PostBase):
 
 class PostResponse(PostBase):
     id: int
+    user_id: int  # Pode ser necessário implementar isso melhor depois
     created_at: datetime
     updated_at: datetime

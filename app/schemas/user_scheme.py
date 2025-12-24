@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+from app.schemas.post_schema import PostResponse
+
 
 class UserBase(BaseModel):
     name: str
@@ -12,3 +14,4 @@ class UserRequest(UserBase):
 
 class UserResponse(UserBase):
     id: int
+    posts: list[PostResponse]
