@@ -18,5 +18,9 @@ class PostNotFoundError(Exception):
     pass
 
 
+class CommentNotFoundError(Exception):
+    pass
+
+
 class InvalidCredentialsError(Exception):
     pass
