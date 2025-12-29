@@ -1,9 +1,10 @@
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 from datetime import datetime, timezone
 from sqlmodel import SQLModel, Field, Relationship  # type: ignore
 
-from app.models.post_model import Post
-from app.models.user_model import User
+if TYPE_CHECKING:
+    from app.models.post_model import Post
+    from app.models.user_model import User
 
 
 class Comment(SQLModel, table=True):
@@ -12,5 +13,5 @@ class Comment(SQLModel, table=True):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     user_id: int = Field(foreign_key='user.id')
     post_id: int = Field(foreign_key='post.id')
-    user: Optional['User'] = Relationship(back_populates='comment')
-    post: Optional['Post'] = Relationship(back_populates='comment')
+    user: Optional['User'] = Relationship(back_populates='comments')
+    post: Optional['Post'] = Relationship(back_populates='comments')

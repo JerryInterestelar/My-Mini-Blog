@@ -14,9 +14,11 @@ class CommentService:
         self.post = post
 
     def create(self, new_comment: CommentRequest) -> Comment:
-        new_comment_db = Comment.model_validate(new_comment)
-        new_comment_db.post = self.post
-        new_comment_db.user = self.user
+        new_comment_db = Comment(
+            **new_comment.model_dump(),
+            user=self.user,
+            post=self.post,
+        )
         self.session.add(new_comment_db)
         self.session.commit()
         self.session.refresh(new_comment_db)

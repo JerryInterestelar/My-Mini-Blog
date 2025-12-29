@@ -4,7 +4,7 @@ from sqlmodel import Relationship, SQLModel, Field  # type: ignore
 
 if TYPE_CHECKING:
     from app.models.post_model import Post
-    from app.models.post_model import Comment
+    from app.models.comment_model import Comment
 
 
 class User(SQLModel, table=True):

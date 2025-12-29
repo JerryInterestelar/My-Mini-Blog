@@ -17,5 +17,5 @@ class Post(SQLModel, table=True):
         sa_column_kwargs={'onupdate': lambda: datetime.now(timezone.utc)},
     )
     user_id: int | None = Field(default=None, foreign_key='user.id')
-    user: Optional['User'] = Relationship(back_populates='post')
+    user: Optional['User'] = Relationship(back_populates='posts')
     comments: list['Comment'] = Relationship(back_populates='post')
