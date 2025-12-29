@@ -10,6 +10,7 @@ from app.models.post_model import Post
 from app.models.user_model import User  # type: ignore
 from app.schemas.token_schema import Token
 from app.services.auth_service import AuthService
+from app.services.comment_service import CommentService
 from app.services.post_service import PostPublicService, PostUserService
 from app.services.user_service import UserService
 from app.core.database import get_session
@@ -120,3 +121,9 @@ def post_public_service(session: Session) -> PostPublicService:
 @pytest.fixture()
 def post_user_service(user: UserFixture, session: Session) -> PostUserService:
     return PostUserService(user.model, session)
+
+
+# Talvez tenha que implementar uma versão publica e privada de comment depois
+@pytest.fixture()
+def comment_service(session: Session, user: UserFixture, post: Post) -> CommentService:
+    return CommentService(session, user.model, post)
