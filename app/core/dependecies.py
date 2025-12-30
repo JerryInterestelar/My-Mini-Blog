@@ -51,8 +51,6 @@ def get_auth_service(session: session_dep) -> AuthService:
 user_service_dep = Annotated[UserService, Depends(get_user_service)]
 auth_service_dep = Annotated[AuthService, Depends(get_auth_service)]
 
-# TODO: Criar dependência 'get_current_active_user' para bloquear usuários desativados
-
 current_user_dep = Annotated[User, Depends(get_current_user)]
 
 

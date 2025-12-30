@@ -8,16 +8,15 @@ from app.schemas.comment_schema import CommentRequest
 
 
 class CommentService:
-    def __init__(self, session: Session, user: User, post: Post) -> None:
+    def __init__(self, session: Session, user: User) -> None:
         self.session = session
         self.user = user
-        self.post = post
 
-    def create(self, new_comment: CommentRequest) -> Comment:
+    def create(self, new_comment: CommentRequest, post: Post) -> Comment:
         new_comment_db = Comment(
             **new_comment.model_dump(),
             user=self.user,
-            post=self.post,
+            post=post,
         )
         self.session.add(new_comment_db)
         self.session.commit()

@@ -70,9 +70,9 @@ def create_comment(
     try:
         current_post = post_user_service.get_by_id(post_id)
         comment_service = CommentService(
-            post_user_service.session, post_user_service.current_user, current_post
+            post_user_service.session, post_user_service.current_user
         )
-        return comment_service.create(new_comment)
+        return comment_service.create(new_comment, current_post)
     except PostNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
@@ -82,7 +82,7 @@ def create_comment(
     status_code=status.HTTP_200_OK,
     response_model=list[CommentResponse],
 )
-def list_comments(
+def list_post_comments(
     post_id: int, post_user_service: post_user_service_dep
 ) -> list[Comment]:
     try:

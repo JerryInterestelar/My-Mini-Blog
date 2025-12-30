@@ -125,5 +125,5 @@ def post_user_service(user: UserFixture, session: Session) -> PostUserService:
 
 # Talvez tenha que implementar uma versão publica e privada de comment depois
 @pytest.fixture()
-def comment_service(session: Session, user: UserFixture, post: Post) -> CommentService:
-    return CommentService(session, user.model, post)
+def comment_service(session: Session, user: UserFixture) -> CommentService:
+    return CommentService(session, user.model)
