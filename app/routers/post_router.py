@@ -59,9 +59,10 @@ def delete_post(
 
 
 # INFO: Gerenciamento de Comentários
+# TODO: Com a refatoração de CommentService, ver ser dá pra implementar ele aqui melhor
 @router.post(
     '/{post_id}/comments',
-    status_code=status.HTTP_200_OK,
+    status_code=status.HTTP_201_CREATED,
     response_model=CommentResponse,
 )
 def create_comment(
