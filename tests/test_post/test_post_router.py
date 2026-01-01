@@ -2,6 +2,7 @@ from fastapi import status
 import pytest  # type: ignore
 from fastapi.testclient import TestClient
 
+from app.models.comment_model import Comment
 from app.models.post_model import Post
 from app.schemas.token_schema import Token
 from tests.conftest import UserFixture
@@ -62,3 +63,27 @@ def test_delete_post_ok(
         response.json()['message']
         == f'Postagem de id: {user.model.id} deletada com sucesso'
     )
+
+
+def test_create_comment_ok(client: TestClient, token: Token, post: Post) -> None:
+    response = client.post(
+        f'/posts/{post.id}/comments',
+        headers={'Authorization': f'Bearer {token.access_token}'},
+        json={'content': 'Conteudo'},
+    )
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert response.json()['content']
+    assert response.json()['content'] == 'Conteudo'
+
+
+def test_list_post_comment_ok(
+    client: TestClient, token: Token, post: Post, comment: Comment
+) -> None:
+    response = client.get(
+        f'/posts/{post.id}/comments',
+        headers={'Authorization': f'Bearer {token.access_token}'},
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json()) == 1
+    assert response.json()[0]['content'] == 'Conteudo'

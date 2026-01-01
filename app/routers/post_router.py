@@ -5,8 +5,11 @@ from app.models.comment_model import Comment
 from app.models.post_model import Post
 from app.schemas.comment_schema import CommentRequest, CommentResponse
 from app.schemas.post_schema import PostRequest, PostResponse
-from app.core.dependecies import post_user_service_dep, post_public_service_dep
-from app.services.comment_service import CommentService
+from app.core.dependecies import (
+    post_user_service_dep,
+    post_public_service_dep,
+    comment_service_dep,
+)
 
 router = APIRouter(prefix='/posts', tags=['Posts'])
 
@@ -66,13 +69,13 @@ def delete_post(
     response_model=CommentResponse,
 )
 def create_comment(
-    post_id: int, post_user_service: post_user_service_dep, new_comment: CommentRequest
+    post_id: int,
+    post_user_service: post_user_service_dep,
+    new_comment: CommentRequest,
+    comment_service: comment_service_dep,
 ) -> Comment:
     try:
         current_post = post_user_service.get_by_id(post_id)
-        comment_service = CommentService(
-            post_user_service.session, post_user_service.current_user
-        )
         return comment_service.create(new_comment, current_post)
     except PostNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
@@ -84,7 +87,8 @@ def create_comment(
     response_model=list[CommentResponse],
 )
 def list_post_comments(
-    post_id: int, post_user_service: post_user_service_dep
+    post_id: int,
+    post_user_service: post_user_service_dep,
 ) -> list[Comment]:
     try:
         return post_user_service.get_by_id(post_id).comments

@@ -6,8 +6,10 @@ from fastapi.testclient import TestClient
 
 from app.core.security import get_password_hash
 from app.main import app
+from app.models.comment_model import Comment
 from app.models.post_model import Post
 from app.models.user_model import User  # type: ignore
+from app.schemas.comment_schema import CommentRequest
 from app.schemas.token_schema import Token
 from app.services.auth_service import AuthService
 from app.services.comment_service import CommentService
@@ -92,6 +94,21 @@ def other_post(other_user: UserFixture, session: Session) -> Post:
     session.commit()
     session.refresh(new_post)
     return new_post
+
+
+@pytest.fixture()
+def comment(user: UserFixture, post: Post, session: Session) -> Comment | None:
+    new_comment = CommentRequest(content='Conteudo')
+    new_comment_db = Comment(
+        **new_comment.model_dump(),
+        user=user.model,
+        post=post,
+    )
+
+    session.add(new_comment_db)
+    session.commit()
+    session.refresh(new_comment_db)
+    return new_comment_db
 
 
 @pytest.fixture()

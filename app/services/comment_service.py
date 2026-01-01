@@ -44,6 +44,7 @@ class CommentService:
         self.session.refresh(comment_db)
         return comment_db
 
+    # TODO: O dono do post poderia ter a permissão de apagar o comentário
     def delete(self, comment_id: int) -> None:
         comment_db = self.get_by_id(comment_id)
         if comment_db.user_id != self.user.id:

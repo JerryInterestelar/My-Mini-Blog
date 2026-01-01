@@ -12,6 +12,5 @@ class CommentRequest(CommentBase):
 
 class CommentResponse(CommentBase):
     id: int | None
-    user_id: int
     post_id: int
     created_at: datetime

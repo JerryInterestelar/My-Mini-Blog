@@ -47,7 +47,8 @@ def test_comments_update_ok(comment_service: CommentService, post: Post) -> None
 
 def test_comments_delete_ok(comment_service: CommentService, post: Post) -> None:
     new_comment = CommentRequest(content='Comentario')
-    comment_service.create(new_comment, post)
+    new_comment_db = comment_service.create(new_comment, post)
 
-    comment_service.delete(1)
+    assert new_comment_db.id
+    comment_service.delete(new_comment_db.id)
     assert comment_service.list_comments() == []
