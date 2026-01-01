@@ -6,10 +6,13 @@ from fastapi.testclient import TestClient
 
 from app.core.security import get_password_hash
 from app.main import app
+from app.models.comment_model import Comment
 from app.models.post_model import Post
 from app.models.user_model import User  # type: ignore
+from app.schemas.comment_schema import CommentRequest
 from app.schemas.token_schema import Token
 from app.services.auth_service import AuthService
+from app.services.comment_service import CommentService
 from app.services.post_service import PostPublicService, PostUserService
 from app.services.user_service import UserService
 from app.core.database import get_session
@@ -94,6 +97,21 @@ def other_post(other_user: UserFixture, session: Session) -> Post:
 
 
 @pytest.fixture()
+def comment(user: UserFixture, post: Post, session: Session) -> Comment | None:
+    new_comment = CommentRequest(content='Conteudo')
+    new_comment_db = Comment(
+        **new_comment.model_dump(),
+        user=user.model,
+        post=post,
+    )
+
+    session.add(new_comment_db)
+    session.commit()
+    session.refresh(new_comment_db)
+    return new_comment_db
+
+
+@pytest.fixture()
 def token(client: TestClient, user: UserFixture) -> Token:
     response = client.post(
         '/auth/token',
@@ -120,3 +138,9 @@ def post_public_service(session: Session) -> PostPublicService:
 @pytest.fixture()
 def post_user_service(user: UserFixture, session: Session) -> PostUserService:
     return PostUserService(user.model, session)
+
+
+# Talvez tenha que implementar uma versão publica e privada de comment depois
+@pytest.fixture()
+def comment_service(session: Session, user: UserFixture) -> CommentService:
+    return CommentService(session, user.model)

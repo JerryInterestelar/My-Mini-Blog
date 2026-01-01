@@ -1,11 +1,19 @@
 from fastapi import APIRouter, HTTPException, status
 
 from app.core.exceptions import PostNotFoundError, UserHasNoPermissionsError
+from app.models.comment_model import Comment
 from app.models.post_model import Post
+from app.schemas.comment_schema import CommentRequest, CommentResponse
 from app.schemas.post_schema import PostRequest, PostResponse
-from app.core.dependecies import post_user_service_dep, post_public_service_dep
+from app.core.dependecies import (
+    post_user_service_dep,
+    post_public_service_dep,
+    comment_service_dep,
+)
 
 router = APIRouter(prefix='/posts', tags=['Posts'])
+
+# INFO: Gerenciamento de Postagens
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=PostResponse)
@@ -51,3 +59,38 @@ def delete_post(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except UserHasNoPermissionsError as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
+
+# INFO: Gerenciamento de Comentários
+# TODO: Com a refatoração de CommentService, ver ser dá pra implementar ele aqui melhor
+@router.post(
+    '/{post_id}/comments',
+    status_code=status.HTTP_201_CREATED,
+    response_model=CommentResponse,
+)
+def create_comment(
+    post_id: int,
+    post_user_service: post_user_service_dep,
+    new_comment: CommentRequest,
+    comment_service: comment_service_dep,
+) -> Comment:
+    try:
+        current_post = post_user_service.get_by_id(post_id)
+        return comment_service.create(new_comment, current_post)
+    except PostNotFoundError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+
+
+@router.get(
+    '/{post_id}/comments',
+    status_code=status.HTTP_200_OK,
+    response_model=list[CommentResponse],
+)
+def list_post_comments(
+    post_id: int,
+    post_user_service: post_user_service_dep,
+) -> list[Comment]:
+    try:
+        return post_user_service.get_by_id(post_id).comments
+    except PostNotFoundError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))

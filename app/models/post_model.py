@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 
 if TYPE_CHECKING:
     from app.models.user_model import User
+    from app.models.comment_model import Comment
 
 
 class Post(SQLModel, table=True):
@@ -17,3 +18,4 @@ class Post(SQLModel, table=True):
     )
     user_id: int | None = Field(default=None, foreign_key='user.id')
     user: Optional['User'] = Relationship(back_populates='posts')
+    comments: list['Comment'] = Relationship(back_populates='post')

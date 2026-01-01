@@ -11,6 +11,7 @@ from app.core.exceptions import InvalidCredentialsError
 from app.models.user_model import User
 from app.schemas.token_schema import TokenData
 from app.services.auth_service import AuthService
+from app.services.comment_service import CommentService
 from app.services.post_service import PostPublicService, PostUserService
 from app.services.user_service import UserService
 
@@ -51,8 +52,6 @@ def get_auth_service(session: session_dep) -> AuthService:
 user_service_dep = Annotated[UserService, Depends(get_user_service)]
 auth_service_dep = Annotated[AuthService, Depends(get_auth_service)]
 
-# TODO: Criar dependência 'get_current_active_user' para bloquear usuários desativados
-
 current_user_dep = Annotated[User, Depends(get_current_user)]
 
 
@@ -68,3 +67,10 @@ def get_user_post_service(
 
 post_public_service_dep = Annotated[PostUserService, Depends(get_post_service)]
 post_user_service_dep = Annotated[PostUserService, Depends(get_user_post_service)]
+
+
+def get_comment_service(session: session_dep, user: current_user_dep) -> CommentService:
+    return CommentService(session, user)
+
+
+comment_service_dep = Annotated[CommentService, Depends(get_comment_service)]
