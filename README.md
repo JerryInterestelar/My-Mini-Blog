@@ -32,7 +32,7 @@ Uma API RESTful desenvolvida em Python para gerenciamento de um mini-blog. Este 
 1. Clone este repositório:
    ```bash
    git clone https://github.com/JerryInterestelar/My-Mini-Blog
-   cd my-mini-blog
+   cd My-Mini-Blog/
 
 2. Instale as dependências do projeto utilizando o Poetry:
    ```bash
